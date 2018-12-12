@@ -6,28 +6,38 @@ The sample will create the following components:
 1. Python application using Sentry (Flask)
 
 ## Quick steps
-1. Initialize the environment (Bash scripts provided)
+On a bash terminal run the following commands to init the environment
 
-  1. Clone this repository on an Ubuntu 16.04 Xenial Xerus
+```bash
+git clone https://github.com/rafamunozg/sentry-sample.git
+cd sentry-sample
+./init/docker.sh
+./init/terraform.sh
+```
+
+## Now step by step and some troubleshooting
+### Initialize the environment
+
+1. Clone this repository on an Ubuntu 16.04 Xenial Xerus
   
-  `git clone https://github.com/rafamunozg/sentry-sample.git`
+`git clone https://github.com/rafamunozg/sentry-sample.git`
   
-  _If Git is missing, follow the recommendation to install it, or simply use:_
+> _If Git is missing, follow the recommendation to install it, or simply use:_
   
-  `sudo apt-get install -y git `
+`sudo apt-get install -y git `
   
-  Then clone the repository with the instruction
+Then try to clone the repository again ... it should work this time.
   
-  1. CD into the sentry-sample folder
+1. CD into the sentry-sample folder
 
-  `cd sentry-sample`
+`cd sentry-sample`
 
-  1. Install Docker
+1. Install Docker
 
-  `./init/docker.sh`
+`./init/docker.sh`
 
-  1. Install Terraform
+1. Install Terraform
 
-  `./init/terraform.sh`
+`./init/terraform.sh`
 
 ...
