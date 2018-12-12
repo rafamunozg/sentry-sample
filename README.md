@@ -9,9 +9,12 @@ The sample will create the following components:
 On a bash terminal run the following commands to init the environment
 
 ```bash
+cd ~
 git clone https://github.com/rafamunozg/sentry-sample.git
 cd sentry-sample
 ./init/docker.sh
+su -l $USER
+cd sentry-sample
 ./init/terraform.sh
 ```
 
