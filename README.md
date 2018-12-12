@@ -19,10 +19,15 @@ The sample will create the following components:
   Then clone the repository with the instruction
   
   1. CD into the sentry-sample folder
+
   `cd sentry-sample`
+
   1. Install Docker
+
   `./init/docker.sh`
+
   1. Install Terraform
+
   `./init/terraform.sh`
 
 ...
