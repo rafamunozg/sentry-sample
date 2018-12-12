@@ -7,11 +7,17 @@ The sample will create the following components:
 
 ## Quick steps
 1. Initialize the environment (Bash scripts provided)
+
   1. Clone this repository on an Ubuntu 16.04 Xenial Xerus
-  `git clone blah`
+  
+  `git clone https://github.com/rafamunozg/sentry-sample.git`
+  
   _If Git is missing, follow the recommendation to install it, or simply use:_
-  `apt-get install -y git `
-  Then clone the repository
+  
+  `sudo apt-get install -y git `
+  
+  Then clone the repository with the instruction
+  
   1. CD into the sentry-sample folder
   `cd sentry-sample`
   1. Install Docker
