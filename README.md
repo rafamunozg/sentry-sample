@@ -16,6 +16,9 @@ cd sentry-sample
 su -l $USER
 cd sentry-sample
 ./init/terraform.sh
+cd terraform
+terraform init
+terraform apply
 ```
 
 ## Now step by step and some troubleshooting
