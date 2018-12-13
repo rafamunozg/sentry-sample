@@ -82,7 +82,7 @@ resource "docker_container" "postgres-container" {
 resource "null_resource" "capture-sentry-key" {
   depends_on = ["docker_image.sentry-image"]
   provisioner "local-exec" {
-    command = "docker run ${docker_image.sentry-image.latest} config generate-secret-key > sentry-key.out"
+    command = "docker run --rm ${docker_image.sentry-image.latest} config generate-secret-key | tr -d '\n' > sentry-key.out"
   }
 }
 
@@ -92,10 +92,10 @@ data "local_file" "sentry-key" {
 }
 
 /*
-resource "null_resource" "init-postgres" {
+resource "null_resource" "upgrade-sentry" {
   #depends_on = ["docker_container.postgres-container"]
   provisioner "local-exec" {
-    command = "docker run -it --rm -e SENTRY_SECRET_KEY='${data.local_file.sentry-key.content}' --link sentry-postgres:postgres --link sentry-redis:redis sentry upgrade"
+    command = "docker run --rm -e SENTRY_SECRET_KEY='${data.local_file.sentry-key.content}' --link sentry-postgres:postgres --link sentry-redis:redis sentry upgrade -v 0 --noinput"
   }
 }
 */

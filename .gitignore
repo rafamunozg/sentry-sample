@@ -1,4 +1,5 @@
 *.zip
 terraform.tfstate*
 .terraform
+sentry-key.out
 
