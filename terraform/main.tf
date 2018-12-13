@@ -30,6 +30,16 @@ variable "postgres-image" {
   default = "postgres:latest"
 }
 
+variable "postgresPass" {
+  description = "Postgres DB Password"
+  default = "secret"
+}
+
+variable "postgresUser" {
+  description = "Postgres DB User"
+  default = "sentry"
+}
+
 variable "sentry-image" {
   description = "image for Sentry server"
   default = "sentry:latest"
@@ -63,16 +73,36 @@ resource "docker_container" "redis-container" {
   image = "${docker_image.redis-image.latest}"
 }
 
-/*
 resource "docker_container" "postgres-container" {
   name  = "${var.postgres-container}"
   image = "${docker_image.postgres-image.latest}"
-  env {
-    internal = "${var.int_port}"
-    external = "${var.ext_port}"
+  env = ["POSTGRES_PASSWORD=${var.postgresPass}","POSTGRES_USER=${var.postgresUser}"]
+}
+
+resource "null_resource" "capture-sentry-key" {
+  depends_on = ["docker_image.sentry-image"]
+  provisioner "local-exec" {
+    command = "docker run ${docker_image.sentry-image.latest} config generate-secret-key > sentry-key.out"
   }
 }
-*/ 
+
+data "local_file" "sentry-key" {
+  depends_on = ["null_resource.capture-sentry-key"]
+  filename = "./sentry-key.out"
+}
+
+/*
+resource "null_resource" "init-postgres" {
+  #depends_on = ["docker_container.postgres-container"]
+  provisioner "local-exec" {
+    command = "docker run -it --rm -e SENTRY_SECRET_KEY='${data.local_file.sentry-key.content}' --link sentry-postgres:postgres --link sentry-redis:redis sentry upgrade"
+  }
+}
+*/
+
+####################################################
+##                 Outputs
+####################################################
 
 #Output the IP Address of the Container
 
@@ -82,6 +112,18 @@ output "Redis IP Address" {
 
 output "redis-container-name" {
   value = "${docker_container.redis-container.name}"
+}
+
+output "Postgres IP Address" {
+  value = "${docker_container.postgres-container.ip_address}"
+}
+
+output "postgres-container-name" {
+  value = "${docker_container.postgres-container.name}"
+}
+
+output "sentry-key" {
+  value = "${data.local_file.sentry-key.content}"
 }
 
 
