@@ -19,6 +19,7 @@ output "postgres-container-name" {
   value = "${docker_container.postgres-container.name}"
 }
 
-output "Sentry main URL:" {
-    value = "${format("http://%s:%s", ${data.local_file.host-name.content}, ${var.sentry-webport})}"
+output "Sentry host server" {
+    value = "${format("http://%s:%s",chomp(data.local_file.host-name.content), var.sentry-webport)}"
 }
+

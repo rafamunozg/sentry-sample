@@ -46,12 +46,13 @@ data "local_file" "sentry-key" {
 }
 
 resource "null_resource" "capture-hostname"{
-  provisioner "local_exec" {
-    command = "echo $HOSTNAME > tr -d '\n' > hostname.out"
+  provisioner "local-exec" {
+    command = "hostname > hostname.out"
   }
 }
 
 data "local_file" "host-name" {
+  depends_on = ["null_resource.capture-hostname"]
   filename = "./hostname.out"
 }
 
