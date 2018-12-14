@@ -2,24 +2,10 @@
 ##                 Outputs
 ####################################################
 
-#Output the IP Address of the Container
-output "Redis IP Address" {
-  value = "${docker_container.redis-container.ip_address}"
-}
-
-output "redis-container-name" {
-  value = "${docker_container.redis-container.name}"
-}
-
-output "Postgres IP Address" {
-  value = "${docker_container.postgres-container.ip_address}"
-}
-
-output "postgres-container-name" {
-  value = "${docker_container.postgres-container.name}"
-}
-
 output "Sentry host server" {
     value = "${format("http://%s:%s",chomp(data.local_file.host-name.content), var.sentry-webport)}"
 }
 
+output "Login credentials" {
+    value = "${format("%s / %s", var.user-email, var.user-password)}"
+}
