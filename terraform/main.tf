@@ -20,14 +20,34 @@ variable "sentry-container" {
   default = "my-sentry"
 }
 
+variable "cron-container" {
+  description = "Service instance"
+  default = "sentry-cron"
+}
+
+variable "worker-container" {
+  description = "Workers working with service, it could be more than 1"
+  default = "sentry-worker"
+}
+
+variable "upgrade-sentry-db-container" {
+  description = "Used to create the required DB at the start of the process"
+  default = "upgrade-sentry-db"
+}
+
+variable "create-sentry-superuser" {
+  description = "Used to create the first superuser in silent mode"
+  default = "create-sentry-superuser"
+}
+
 variable "redis-image" {
   description = "image for Redis dependency"
-  default = "redis:latest"
+  default = "redis"
 }
 
 variable "postgres-image" {
   description = "image for Postgres dependency"
-  default = "postgres:latest"
+  default = "postgres"
 }
 
 variable "postgresPass" {
@@ -42,7 +62,22 @@ variable "postgresUser" {
 
 variable "sentry-image" {
   description = "image for Sentry server"
-  default = "sentry:latest"
+  default = "sentry"
+}
+
+variable "user-email" {
+  description = "Will be the username for initial superuser"
+  default = "user@email.com"
+}
+
+variable "user-password" {
+  description = "Will be the password for superuser ... handle with care."
+  default = "Pa55word"
+}
+
+variable "sentry-webport" {
+  description = "Port to be mapped externally"
+  default = 80
 }
 
 ###################################################
@@ -91,14 +126,31 @@ data "local_file" "sentry-key" {
   filename = "./sentry-key.out"
 }
 
-/*
-resource "null_resource" "upgrade-sentry" {
-  #depends_on = ["docker_container.postgres-container"]
+resource "null_resource" "upgrade-sentry-db" {
+  depends_on = ["docker_container.postgres-container","docker_container.redis-container"]
   provisioner "local-exec" {
-    command = "docker run --rm -e SENTRY_SECRET_KEY='${data.local_file.sentry-key.content}' --link sentry-postgres:postgres --link sentry-redis:redis sentry upgrade -v 0 --noinput"
+    command = "docker run --rm -e SENTRY_SECRET_KEY='${data.local_file.sentry-key.content}' --link sentry-postgres:postgres --link sentry-redis:redis sentry upgrade --noinput"
   }
 }
-*/
+
+resource "null_resource" "create-sentry-superuser" {
+  depends_on = ["null_resource.upgrade-sentry-db"]
+  provisioner "local-exec" {
+    command = "docker run --rm -e SENTRY_SECRET_KEY='${data.local_file.sentry-key.content}' --link sentry-postgres:postgres --link sentry-redis:redis sentry createuser --email ${var.user-email} --password ${var.user-password} --superuser"
+  }
+}
+
+resource "docker_container" "sentry-container" {
+  name = "${var.sentry-container}"
+  image = "${docker_image.sentry-image.latest}"
+  env = ["SENTRY_SECRET_KEY='${data.local_file.sentry-key.content}'"]
+  ports = {
+    internal = "9000"
+    external = "${var.sentry-webport}"
+  }
+  links = ["${docker_container.redis-container.name}:${docker_image.redis-image.name}","${docker_container.postgres-container.name}:${docker_image.postgres-image.name}"]
+}
+
 
 ####################################################
 ##                 Outputs
