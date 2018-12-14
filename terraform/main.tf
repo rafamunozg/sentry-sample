@@ -67,7 +67,7 @@ variable "sentry-image" {
 
 variable "user-email" {
   description = "Will be the username for initial superuser"
-  default = "user@email.com"
+  default = "user@mail.com"
 }
 
 variable "user-password" {
@@ -149,8 +149,24 @@ resource "docker_container" "sentry-container" {
     external = "${var.sentry-webport}"
   }
   links = ["${docker_container.redis-container.name}:${docker_image.redis-image.name}","${docker_container.postgres-container.name}:${docker_image.postgres-image.name}"]
+  depends_on = ["null_resource.create-sentry-superuser"]
 }
 
+resource "docker_container" "sentry-cron-container" {
+  name = "${var.cron-container}"
+  image = "${docker_image.sentry-image.latest}"
+  env = ["SENTRY_SECRET_KEY='${data.local_file.sentry-key.content}'"]
+  links = ["${docker_container.redis-container.name}:${docker_image.redis-image.name}","${docker_container.postgres-container.name}:${docker_image.postgres-image.name}"]
+  command = ["run","cron"]
+}
+
+resource "docker_container" "sentry-worker-container" {
+  name = "${var.worker-container}"
+  image = "${docker_image.sentry-image.latest}"
+  env = ["SENTRY_SECRET_KEY='${data.local_file.sentry-key.content}'"]
+  links = ["${docker_container.redis-container.name}:${docker_image.redis-image.name}","${docker_container.postgres-container.name}:${docker_image.postgres-image.name}"]
+  command = ["run","worker"]
+}
 
 ####################################################
 ##                 Outputs
