@@ -77,6 +77,8 @@ terraform apply -auto-approve
     * User
     * Password 
 
+8. Login and provide the final setup info required and you'll get access to your Sentry service
+
 * If errors occur, please report them and I'll get them fixed
 
 ## Next steps
