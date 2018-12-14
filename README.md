@@ -79,7 +79,7 @@ terraform apply -auto-approve
 
 8. Login and provide the final setup info required and you'll get access to your Sentry service
 
-* If errors occur, please report them and I'll get them fixed
+* _If errors occur, please report them and I'll get them fixed_
 
 ## Next steps
 1. Split sensitive data into a security controlled .tfvars file
