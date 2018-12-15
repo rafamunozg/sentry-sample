@@ -20,6 +20,8 @@ resource "docker_image" "sentry-image" {
 
 ###################################################
 ##           Start containers
+##    Following sequence described in Docker's site
+##          https://hub.docker.com/_/sentry/
 ###################################################
 
 resource "docker_container" "redis-container" {
@@ -70,6 +72,10 @@ resource "null_resource" "create-sentry-superuser" {
   }
 }
 
+########################################################
+##    Final containers, these will run the service
+########################################################
+
 resource "docker_container" "sentry-container" {
   name = "${var.sentry-container}"
   image = "${docker_image.sentry-image.latest}"
@@ -98,3 +104,34 @@ resource "docker_container" "sentry-worker-container" {
   command = ["run","worker"]
 }
 
+#######################################################################
+##   Final settings for the site to run wihtout config screen at start
+#######################################################################
+
+resource "null_resource" "set-sentry-urlprefix" {
+  depends_on = ["docker_container.sentry-container"]
+  provisioner "local-exec" {
+    command = "docker run --rm -e SENTRY_SECRET_KEY='${data.local_file.sentry-key.content}' --link sentry-postgres:postgres --link sentry-redis:redis sentry config set system.url-prefix http://${data.local_file.host-name.content}"
+  }
+}
+
+resource "null_resource" "set-sentry-adminemail" {
+  depends_on = ["docker_container.sentry-container"]
+  provisioner "local-exec" {
+    command = "docker run --rm -e SENTRY_SECRET_KEY='${data.local_file.sentry-key.content}' --link sentry-postgres:postgres --link sentry-redis:redis sentry config set system.admin-email ${var.user-email}"
+  }
+}
+
+resource "null_resource" "set-sentry-allowregistration" {
+  depends_on = ["docker_container.sentry-container"]
+  provisioner "local-exec" {
+    command = "docker run --rm -e SENTRY_SECRET_KEY='${data.local_file.sentry-key.content}' --link sentry-postgres:postgres --link sentry-redis:redis sentry config set auth.allow-registration True"
+  }
+}
+
+resource "null_resource" "set-sentry-beaconanonymous" {
+  depends_on = ["docker_container.sentry-container"]
+  provisioner "local-exec" {
+    command = "docker run --rm -e SENTRY_SECRET_KEY='${data.local_file.sentry-key.content}' --link sentry-postgres:postgres --link sentry-redis:redis sentry config set beacon.anonymous True"
+  }
+}
