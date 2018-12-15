@@ -82,7 +82,6 @@ terraform apply -auto-approve
 * _If errors occur, please report them and I'll get them fixed_
 
 ## Next steps
-1. Split sensitive data into a security controlled .tfvars file
 1. Deploy these containers on ECS cluster
 1. Split code in nodes: Postgres, Redis should be their own nodes
 1. Add a couple of workers to the cluster
