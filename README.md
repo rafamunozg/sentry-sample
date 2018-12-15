@@ -1,4 +1,4 @@
-# sentry-sample deployment with Terraform
+# Terraform scripts to deploy a Sentry sample website
 This repository contains the automation scripts to setup a Sentry environment running in Docker.
 The sample will create the following components:
 1. Sentry Website
