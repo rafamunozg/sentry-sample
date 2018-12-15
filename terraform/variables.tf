@@ -6,7 +6,7 @@ variable "redis-container" {
   description = "Redis container needed to run Sentry"
 }
 
-variable "postgres-container"{
+variable "postgres-container" {
   description = "Postgres container needed to run Sentry"
 }
 
