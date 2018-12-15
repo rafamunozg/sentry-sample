@@ -74,12 +74,9 @@ terraform apply -auto-approve
 
 7. At the end of the execution, you will receive the information needed to login to the site
     * URL 
-    * User
-    * Password 
+    * User / Password 
 
-8. Login and provide the final setup info required and you'll get access to your Sentry service
-
-* _If errors occur, please report them and I'll get them fixed_
+8. Login and _continue_ on the initial page
 
 ## Next steps
 1. Deploy these containers on ECS cluster
